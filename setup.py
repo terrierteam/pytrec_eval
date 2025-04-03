@@ -93,7 +93,7 @@ with tempfile.TemporaryDirectory() as tmp_dir:
           package_dir={'pytrec_eval': 'py'},
           python_requires='>=3',
           url='https://github.com/terrierteam/pytrec_eval',
-          download_url=https://github.com/terrierteam/pytrec_eval/releases',
+          download_url='https://github.com/terrierteam/pytrec_eval/releases',
           keywords=[
               'trec_eval',
               'information retrieval',
