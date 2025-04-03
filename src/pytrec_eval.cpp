@@ -486,7 +486,7 @@ static int RelevanceEvaluator_init(RelevanceEvaluator* self, PyObject* args, PyO
 
     self->inited_ = true;
 
-    return NULL;
+    return 0;
 }
 
 static void RelevanceEvaluator_dealloc(RelevanceEvaluator* self) {
