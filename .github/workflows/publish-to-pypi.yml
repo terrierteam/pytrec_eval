@@ -97,7 +97,7 @@ jobs:
     - name: build (release)
       if: github.event.inputs.releasetype == 'release'
       env:
-        CIBW_SKIP: "cp27-* pp27-*"  # skip Python 2.7 wheels
+        CIBW_SKIP: "cp27-* pp27-* pp3*-*"  # skip Python 2.7 wheels and all pypy versions
       run: |
         python -m cibuildwheel --output-dir wheelhouse
 
