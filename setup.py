@@ -86,14 +86,14 @@ with tempfile.TemporaryDirectory() as tmp_dir:
           description='Provides Python bindings for popular '
                       'Information Retrieval measures implemented '
                       'within trec_eval.',
-          author='Christophe Van Gysel',
+          author='Christophe Van Gysel -> forked by Terrier team',
           author_email='cvangysel@uva.nl',
           ext_modules=[pytrec_eval_ext],
           packages=['pytrec_eval'],
           package_dir={'pytrec_eval': 'py'},
           python_requires='>=3',
-          url='https://github.com/cvangysel/pytrec_eval',
-          download_url='https://github.com/cvangysel/pytrec_eval/tarball/0.5',
+          url='https://github.com/terrierteam/pytrec_eval',
+          download_url=https://github.com/terrierteam/pytrec_eval/releases',
           keywords=[
               'trec_eval',
               'information retrieval',
