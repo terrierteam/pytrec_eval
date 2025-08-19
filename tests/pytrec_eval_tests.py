@@ -51,6 +51,7 @@ class PyTrecEvalUnitTest(unittest.TestCase):
                 'd2': 1,
                 'd3': 1,
             },
+            'q10': {},
         }
 
         evaluator = pytrec_eval.RelevanceEvaluator(
@@ -145,6 +146,19 @@ class PyTrecEvalUnitTest(unittest.TestCase):
                 },
             })['q2']['ndcg'],
             1.0)
+
+        self.assertTrue(
+            'q10' not in evaluator.evaluate({
+                'q1': {},
+                'q2': {
+                    'd1': 1.0,
+                    'd2': 0.0,
+                    'd3': 1.5,
+                },
+                'q10': {
+                    'd1': 1.0
+                }
+            }))
 
     def test_nicknames(self):
         qrel = {
