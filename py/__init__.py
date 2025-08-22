@@ -201,12 +201,12 @@ class RelevanceEvaluator(_RelevanceEvaluator):
                 param_meas[base_meas].update(meas_args.split(','))
             elif measure not in param_meas:
                 param_meas[measure] = set()
-        
+
         # re-construct in meas.p1,p2,p3 format for trec_eval
         fmt_meas = set()
         for meas, meas_args in param_meas.items():
             if meas_args:
                 meas = '{}.{}'.format(meas, ','.join(sorted(meas_args)))
-                fmt_meas.add(meas)
+            fmt_meas.add(meas)
 
         return fmt_meas
