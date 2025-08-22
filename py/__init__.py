@@ -104,11 +104,6 @@ def compute_aggregated_measure(measure: str, values: list[float]) -> float:
 class RelevanceEvaluator(_RelevanceEvaluator):
     """Evaluate system runs against TREC-style relevance judgments.
 
-    This class extends `pytrec_eval_ext.RelevanceEvaluator` with:
-      - Expansion of measure nicknames (e.g., "official", "all_trec").
-      - Support for parameterized measures in "measure.param" or "measure_param" format.
-      - Filtering of queries with empty qrels (bugfix for #57).
-
     Args:
         query_relevance: A mapping from query IDs to document IDs and relevance levels.
         measures: A list or set of measures (or nicknames) to compute.
