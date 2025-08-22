@@ -1,19 +1,20 @@
+"""Module pytrec_eval."""
 __version__ = "0.5.8"
 
 import re
 import collections
 import numpy as np
-from typing import TextIO, Iterable, Mapping, Any
+from typing import Iterable, Mapping, Any
 
 from pytrec_eval_ext import RelevanceEvaluator as _RelevanceEvaluator
 from pytrec_eval_ext import supported_measures, supported_nicknames
 
 __all__ = [
-    "parse_run",
-    "parse_qrel",
-    "supported_measures",
-    "supported_nicknames",
-    "RelevanceEvaluator",
+    'parse_run',
+    'parse_qrel',
+    'supported_measures',
+    'supported_nicknames',
+    'RelevanceEvaluator',
 ]
 
 
@@ -39,8 +40,10 @@ def parse_run(f_run: Iterable[str]) -> dict[str, dict[str, float]]:
     run = collections.defaultdict(dict)
     for line in f_run:
         query_id, _, object_id, ranking, score, _ = line.strip().split()
+
         assert object_id not in run[query_id]
         run[query_id][object_id] = float(score)
+
     return run
 
 
@@ -66,8 +69,10 @@ def parse_qrel(f_qrel: Iterable[str]) -> dict[str, dict[str, int]]:
     qrel = collections.defaultdict(dict)
     for line in f_qrel:
         query_id, _, object_id, relevance = line.strip().split()
+
         assert object_id not in qrel[query_id]
         qrel[query_id][object_id] = int(relevance)
+
     return qrel
 
 
@@ -89,10 +94,8 @@ def compute_aggregated_measure(measure: str, values: list[float]) -> float:
     if measure.startswith("num_"):
         agg_fun = np.sum
     elif measure.startswith("gm_"):
-
         def agg_fun(values: list[float]) -> float:
-            return float(np.exp(np.sum(values) / len(values)))
-
+            return np.exp(np.sum(values) / len(values))
     else:
         agg_fun = np.mean
     return float(agg_fun(values))
@@ -122,6 +125,7 @@ class RelevanceEvaluator(_RelevanceEvaluator):
     ) -> None:
         measures = self._expand_nicknames(measures)
         measures = self._combine_measures(measures)
+        # fixes https://github.com/cvangysel/pytrec_eval/issues/57
         query_relevance = {
             query_id: qrels
             for query_id, qrels in query_relevance.items()
@@ -192,15 +196,17 @@ class RelevanceEvaluator(_RelevanceEvaluator):
                 )
                 match = next(filter(lambda x: x[1] is not None, matches), None)
                 if match is None:
-                    raise ValueError(f"unsupported measure {measure}")
+                    raise ValueError('unsupported measure {}'.format(measure))
                 base_meas, meas_args = match[0], match[1].group(1)
-                param_meas[base_meas].update(meas_args.split(","))
+                param_meas[base_meas].update(meas_args.split(','))
             elif measure not in param_meas:
                 param_meas[measure] = set()
-
-        fmt_meas: set[str] = set()
+        
+        # re-construct in meas.p1,p2,p3 format for trec_eval
+        fmt_meas = set()
         for meas, meas_args in param_meas.items():
             if meas_args:
-                meas = f"{meas}.{','.join(sorted(meas_args))}"
-            fmt_meas.add(meas)
+                meas = '{}.{}'.format(meas, ','.join(sorted(meas_args)))
+                fmt_meas.add(meas)
+
         return fmt_meas
