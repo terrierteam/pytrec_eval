@@ -5,6 +5,7 @@ __version__ = '0.5.8'
 import collections
 import re
 from collections.abc import Callable, Iterable, Mapping
+from typing import Dict, List, Set
 
 import numpy as np
 from pytrec_eval_ext import RelevanceEvaluator as _RelevanceEvaluator
@@ -19,7 +20,7 @@ __all__ = [
 ]
 
 
-def parse_run(f_run: Iterable[str]) -> dict[str, dict[str, float]]:
+def parse_run(f_run: Iterable[str]) -> Dict[str, Dict[str, float]]:
     """Parse a TREC run file.
 
     Each line must be formatted as:
@@ -38,7 +39,7 @@ def parse_run(f_run: Iterable[str]) -> dict[str, dict[str, float]]:
     Raises:
         AssertionError: If the same document ID appears twice for the same query.
     """
-    run: dict[str, dict[str, float]] = collections.defaultdict(dict)
+    run: Dict[str, Dict[str, float]] = collections.defaultdict(dict)
     for line in f_run:
         query_id, _, object_id, ranking, score, _ = line.strip().split()
 
@@ -48,7 +49,7 @@ def parse_run(f_run: Iterable[str]) -> dict[str, dict[str, float]]:
     return run
 
 
-def parse_qrel(f_qrel: Iterable[str]) -> dict[str, dict[str, int]]:
+def parse_qrel(f_qrel: Iterable[str]) -> Dict[str, Dict[str, int]]:
     """Parse a TREC qrel file.
 
     Each line must be formatted as:
@@ -67,7 +68,7 @@ def parse_qrel(f_qrel: Iterable[str]) -> dict[str, dict[str, int]]:
     Raises:
         AssertionError: If the same document ID appears twice for the same query.
     """
-    qrel: dict[str, dict[str, int]] = collections.defaultdict(dict)
+    qrel: Dict[str, Dict[str, int]] = collections.defaultdict(dict)
     for line in f_qrel:
         query_id, _, object_id, relevance = line.strip().split()
 
@@ -77,7 +78,7 @@ def parse_qrel(f_qrel: Iterable[str]) -> dict[str, dict[str, int]]:
     return qrel
 
 
-def compute_aggregated_measure(measure: str, values: list[float]) -> float:
+def compute_aggregated_measure(measure: str, values: List[float]) -> float:
     """Compute an aggregated evaluation measure across queries.
 
     The aggregation function is determined by the measure name:
@@ -93,13 +94,13 @@ def compute_aggregated_measure(measure: str, values: list[float]) -> float:
         The aggregated score across queries.
     """
     if measure.startswith('num_'):
-        agg_fun: Callable[[list[float]], float] = np.sum
+        agg_fun: Callable[[List[float]], float] = np.sum
     elif measure.startswith('gm_'):
 
-        def agg_fun(values: list[float]) -> float:
+        def agg_fun(values: List[float]) -> float:
             return np.exp(np.sum(values) / len(values))
     else:
-        agg_fun: Callable[[list[float]], float] = np.mean  # type: ignore[no-redef]
+        agg_fun: Callable[[List[float]], float] = np.mean  # type: ignore[no-redef]
     return float(agg_fun(values))
 
 
@@ -130,7 +131,7 @@ class RelevanceEvaluator(_RelevanceEvaluator):
             judged_docs_only_flag=judged_docs_only_flag,
         )
 
-    def evaluate(self, scores: Mapping[str, Mapping[str, float]]) -> dict[str, dict[str, float]]:
+    def evaluate(self, scores: Mapping[str, Mapping[str, float]]) -> Dict[str, Dict[str, float]]:
         """Evaluate a run against the stored qrels.
 
         Args:
@@ -148,7 +149,7 @@ class RelevanceEvaluator(_RelevanceEvaluator):
             return {}
         return super().evaluate(scores)
 
-    def _expand_nicknames(self, measures: Iterable[str]) -> set[str]:
+    def _expand_nicknames(self, measures: Iterable[str]) -> Set[str]:
         """Expand measure nicknames into their constituent measures."""
         result = set()
         for measure in measures:
@@ -158,7 +159,7 @@ class RelevanceEvaluator(_RelevanceEvaluator):
                 result.add(measure)
         return result
 
-    def _combine_measures(self, measures: Iterable[str]) -> set[str]:
+    def _combine_measures(self, measures: Iterable[str]) -> Set[str]:
         """Normalize and combine measures into TREC-eval compatible format.
 
         Handles:
