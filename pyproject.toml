@@ -4,6 +4,7 @@ requires = ["setuptools"]
 [dependency-groups]
 lint = ["ruff==0.12.12"]
 typecheck = ["mypy==1.17.1"]
+test = ["pytest"]
 
 [tool.ruff]
 target-version = "py39"

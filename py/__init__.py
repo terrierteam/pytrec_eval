@@ -38,7 +38,7 @@ def parse_run(f_run: Iterable[str]) -> dict[str, dict[str, float]]:
     Raises:
         AssertionError: If the same document ID appears twice for the same query.
     """
-    run:dict[str, dict[str, float]]  = collections.defaultdict(dict)
+    run: dict[str, dict[str, float]] = collections.defaultdict(dict)
     for line in f_run:
         query_id, _, object_id, ranking, score, _ = line.strip().split()
 
@@ -93,7 +93,7 @@ def compute_aggregated_measure(measure: str, values: list[float]) -> float:
         The aggregated score across queries.
     """
     if measure.startswith("num_"):
-        agg_fun : Callable[[list[float]], float]= np.sum
+        agg_fun: Callable[[list[float]], float] = np.sum
     elif measure.startswith("gm_"):
 
         def agg_fun(values: list[float]) -> float:
@@ -186,6 +186,8 @@ class RelevanceEvaluator(_RelevanceEvaluator):
                     raise ValueError(f"unsupported measure {measure}")
                 base_meas, meas_args = match[0], match[1].group(1)  # type: ignore[union-attr]
                 param_meas[base_meas].update(meas_args.split(","))
+            elif measure not in param_meas:
+                param_meas[measure] = set()
 
         # re-construct in meas.p1,p2,p3 format for trec_eval
         fmt_meas = set()
