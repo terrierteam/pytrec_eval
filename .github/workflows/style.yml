@@ -5,6 +5,29 @@ on:
   pull_request: {} # all PRs
 
 jobs:
+  mypy:
+    # mypy results differ based on the python version, so run on multiple ones
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.9', '3.12']
+
+    runs-on: 'ubuntu-latest'
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install
+      run: |
+        pip install .
+
+    - name: MyPy
+      run: 'mypy pytrec_eval'
+
   ruff:
     strategy:
       matrix:
