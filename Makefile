@@ -7,3 +7,7 @@ lint:
 format:
 	ruff format py
 	ruff check py --fix
+
+.PHONY: typecheck
+typecheck:
+	mypy py

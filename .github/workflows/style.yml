@@ -23,11 +23,10 @@ jobs:
 
     - name: Install
       run: |
-        pip install .
-        pip install mypy
+        pip install -e . --group typecheck
 
     - name: MyPy
-      run: 'mypy pytrec_eval'
+      run: 'mypy py'
 
   ruff:
     strategy:
@@ -53,4 +52,4 @@ jobs:
         pip install -e . --group lint
 
     - name: Ruff
-      run: 'ruff check --output-format=github pytrec_eval'
+      run: 'ruff check --output-format=github py'

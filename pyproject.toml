@@ -3,6 +3,7 @@ requires = ["setuptools"]
 
 [dependency-groups]
 lint = ["ruff==0.12.12"]
+typecheck = ["mypy==1.17.1"]
 
 [tool.ruff]
 target-version = "py39"
@@ -28,3 +29,8 @@ allow-multiline = false
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 
+[[tool.mypy.overrides]]
+module = [
+    "pytrec_eval_ext",
+]
+ignore_missing_imports = true

@@ -4,7 +4,7 @@ __version__ = "0.5.8"
 
 import collections
 import re
-from collections.abc import Iterable, Mapping
+from collections.abc import Callable, Iterable, Mapping
 
 import numpy as np
 from pytrec_eval_ext import RelevanceEvaluator as _RelevanceEvaluator
@@ -38,7 +38,7 @@ def parse_run(f_run: Iterable[str]) -> dict[str, dict[str, float]]:
     Raises:
         AssertionError: If the same document ID appears twice for the same query.
     """
-    run = collections.defaultdict(dict)
+    run:dict[str, dict[str, float]]  = collections.defaultdict(dict)
     for line in f_run:
         query_id, _, object_id, ranking, score, _ = line.strip().split()
 
@@ -67,7 +67,7 @@ def parse_qrel(f_qrel: Iterable[str]) -> dict[str, dict[str, int]]:
     Raises:
         AssertionError: If the same document ID appears twice for the same query.
     """
-    qrel = collections.defaultdict(dict)
+    qrel: dict[str, dict[str, int]] = collections.defaultdict(dict)
     for line in f_qrel:
         query_id, _, object_id, relevance = line.strip().split()
 
@@ -93,13 +93,13 @@ def compute_aggregated_measure(measure: str, values: list[float]) -> float:
         The aggregated score across queries.
     """
     if measure.startswith("num_"):
-        agg_fun = np.sum
+        agg_fun : Callable[[list[float]], float]= np.sum
     elif measure.startswith("gm_"):
 
         def agg_fun(values: list[float]) -> float:
             return np.exp(np.sum(values) / len(values))
     else:
-        agg_fun = np.mean
+        agg_fun: Callable[[list[float]], float] = np.mean  # type: ignore[no-redef]
     return float(agg_fun(values))
 
 
@@ -177,17 +177,15 @@ class RelevanceEvaluator(_RelevanceEvaluator):
         """
         RE_BASE = r"{}[\._]([0-9]+(\.[0-9]+)?(,[0-9]+(\.[0-9]+)?)*)"
 
-        param_meas = collections.defaultdict(set)
+        param_meas: dict[str, set[str]] = collections.defaultdict(set)
         for measure in measures:
             if measure not in supported_measures and measure not in supported_nicknames:
                 matches = ((m, re.match(RE_BASE.format(re.escape(m)), measure)) for m in supported_measures)
                 match = next(filter(lambda x: x[1] is not None, matches), None)
                 if match is None:
                     raise ValueError(f"unsupported measure {measure}")
-                base_meas, meas_args = match[0], match[1].group(1)
+                base_meas, meas_args = match[0], match[1].group(1)  # type: ignore[union-attr]
                 param_meas[base_meas].update(meas_args.split(","))
-            elif measure not in param_meas:
-                param_meas[measure] = set()
 
         # re-construct in meas.p1,p2,p3 format for trec_eval
         fmt_meas = set()
