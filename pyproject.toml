@@ -1,2 +1,30 @@
 [build-system]
 requires = ["setuptools"]
+
+[dependency-groups]
+lint = ["ruff==0.12.12"]
+
+[tool.ruff]
+target-version = "py39"
+line-length = 120
+
+[tool.ruff.lint]
+select = [
+    "F",  # pyflakes rules,
+    "I",  # sorting for imports
+    "E",  # formatting for docs
+    "D",  # formatting for docs
+    "UP", # upgrade to latest syntax if possible
+    "FA", # Future annotations
+    "C4", # cleaner comprehensions
+]
+ignore = [
+    "D101",   # Missing docstring in public class
+]
+
+[tool.ruff.lint.flake8-implicit-str-concat]
+allow-multiline = false
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
