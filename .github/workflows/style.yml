@@ -24,6 +24,7 @@ jobs:
     - name: Install
       run: |
         pip install .
+        pip install mypy
 
     - name: MyPy
       run: 'mypy pytrec_eval'
@@ -47,15 +48,9 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    - name: Cache Dependencies
-      uses: actions/cache@v4
-      with:
-        path: ${{ env.pythonLocation }}
-        key: ${{ env.runtag }}-${{ hashFiles('requirements.txt', 'requirements_dev.txt') }}
-
     - name: Install Dependencies
       run: |
         pip install -e . --group lint
 
     - name: Ruff
-      run: 'ruff check --output-format=github pyterrier_rag'
+      run: 'ruff check --output-format=github pytrec_eval'
