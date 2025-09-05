@@ -4,6 +4,7 @@ from setuptools import setup, Extension
 import os
 import sys
 import tempfile
+from pathlib import Path
 
 REMOTE_TREC_EVAL_URI = 'https://github.com/usnistgov/trec_eval/archive/v9.0.8.tar.gz'
 
@@ -81,11 +82,16 @@ with tempfile.TemporaryDirectory() as tmp_dir:
                        ('_GLIBCXX_USE_CXX11_ABI', '0'),
                        ('P_NEEDS_GNU_CXX_NAMESPACE', '1')])
 
+    requirements_file = Path(__file__).parent / 'requirements.txt'
+    with requirements_file.open('r') as fp:
+        requirements = fp.read().splitlines()
+
     setup(name=get_name(),
           version=get_version("py/__init__.py"),
           description='Provides Python bindings for popular '
                       'Information Retrieval measures implemented '
                       'within trec_eval.',
+          install_requires=requirements,
           author='Christophe Van Gysel -> forked by Terrier team',
           author_email='cvangysel@uva.nl',
           ext_modules=[pytrec_eval_ext],

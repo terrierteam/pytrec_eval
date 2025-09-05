@@ -38,22 +38,20 @@ jobs:
         "%VS140COMNTOOLS%../../VC/vcvarsall.bat"
         echo "$INCLUDE"
         set INCLUDE "C:/Program Files (x86)/Windows Kits/10/Include/10.0.10240.0/ucrt"
-        pip install --timeout=120 -vv .
+        pip install --timeout=120 -vv . --group test
 
     - name: install-unix
       if: matrix.os == 'ubuntu-latest' || matrix.os == 'macOs-latest'
       run: |
-        pip install --timeout=120 .
+        pip install --timeout=120 . --group test
         
     - name: Test-unix with pytest
       if: matrix.os == 'ubuntu-latest' || matrix.os == 'macOs-latest'
       run: |
-        pip install pytest
         pytest tests/*.py
 
     - name: Test-windows with pytest
       if: matrix.os == 'windows-latest'
       shell: cmd
       run: |
-        pip install pytest
         pytest tests\pytrec_eval_tests.py

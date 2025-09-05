@@ -1,2 +1,41 @@
 [build-system]
 requires = ["setuptools"]
+
+[dependency-groups]
+lint = ["ruff==0.12.12"]
+typecheck = ["mypy==1.17.1"]
+test = ["pytest"]
+
+[tool.ruff]
+target-version = "py39"
+line-length = 120
+
+[tool.ruff.format]
+quote-style = "single"
+
+[tool.ruff.lint]
+select = [
+    "F",  # pyflakes rules,
+    "I",  # sorting for imports
+    "E",  # formatting for docs
+    "D",  # formatting for docs
+    "UP", # upgrade to latest syntax if possible
+    "FA", # Future annotations
+    "C4", # cleaner comprehensions
+]
+ignore = [
+    "D101",   # Missing docstring in public class
+    "UP035", "UP006" # typing deprecations
+]
+
+[tool.ruff.lint.flake8-implicit-str-concat]
+allow-multiline = false
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[[tool.mypy.overrides]]
+module = [
+    "pytrec_eval_ext",
+]
+ignore_missing_imports = true
