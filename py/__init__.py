@@ -1,6 +1,6 @@
 """Module pytrec_eval."""
 
-__version__ = "0.5.8"
+__version__ = '0.5.8'
 
 import collections
 import re
@@ -11,11 +11,11 @@ from pytrec_eval_ext import RelevanceEvaluator as _RelevanceEvaluator
 from pytrec_eval_ext import supported_measures, supported_nicknames
 
 __all__ = [
-    "parse_run",
-    "parse_qrel",
-    "supported_measures",
-    "supported_nicknames",
-    "RelevanceEvaluator",
+    'parse_run',
+    'parse_qrel',
+    'supported_measures',
+    'supported_nicknames',
+    'RelevanceEvaluator',
 ]
 
 
@@ -92,9 +92,9 @@ def compute_aggregated_measure(measure: str, values: list[float]) -> float:
     Returns:
         The aggregated score across queries.
     """
-    if measure.startswith("num_"):
+    if measure.startswith('num_'):
         agg_fun: Callable[[list[float]], float] = np.sum
-    elif measure.startswith("gm_"):
+    elif measure.startswith('gm_'):
 
         def agg_fun(values: list[float]) -> float:
             return np.exp(np.sum(values) / len(values))
@@ -175,17 +175,23 @@ class RelevanceEvaluator(_RelevanceEvaluator):
         Raises:
             ValueError: If an unsupported measure is encountered.
         """
-        RE_BASE = r"{}[\._]([0-9]+(\.[0-9]+)?(,[0-9]+(\.[0-9]+)?)*)"
+        RE_BASE = r'{}[\._]([0-9]+(\.[0-9]+)?(,[0-9]+(\.[0-9]+)?)*)'
 
+        # break apart measures in any of the following formats and combine
+        #  1) meas          -> {meas: {}}  # either non-parameterized measure or use default params
+        #  2) meas.p1       -> {meas: {p1}}
+        #  3) meas_p1       -> {meas: {p1}}
+        #  4) meas.p1,p2,p3 -> {meas: {p1, p2, p3}}
+        #  5) meas_p1,p2,p3 -> {meas: {p1, p2, p3}}
         param_meas: dict[str, set[str]] = collections.defaultdict(set)
         for measure in measures:
             if measure not in supported_measures and measure not in supported_nicknames:
                 matches = ((m, re.match(RE_BASE.format(re.escape(m)), measure)) for m in supported_measures)
                 match = next(filter(lambda x: x[1] is not None, matches), None)
                 if match is None:
-                    raise ValueError(f"unsupported measure {measure}")
+                    raise ValueError(f'unsupported measure {measure}')
                 base_meas, meas_args = match[0], match[1].group(1)  # type: ignore[union-attr]
-                param_meas[base_meas].update(meas_args.split(","))
+                param_meas[base_meas].update(meas_args.split(','))
             elif measure not in param_meas:
                 param_meas[measure] = set()
 
@@ -193,7 +199,7 @@ class RelevanceEvaluator(_RelevanceEvaluator):
         fmt_meas = set()
         for meas, meas_args in param_meas.items():
             if meas_args:
-                meas = "{}.{}".format(meas, ",".join(sorted(meas_args)))
+                meas = '{}.{}'.format(meas, ','.join(sorted(meas_args)))
             fmt_meas.add(meas)
 
         return fmt_meas

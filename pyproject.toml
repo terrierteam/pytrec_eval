@@ -10,6 +10,9 @@ test = ["pytest"]
 target-version = "py39"
 line-length = 120
 
+[tool.ruff.format]
+quote-style = "single"
+
 [tool.ruff.lint]
 select = [
     "F",  # pyflakes rules,
