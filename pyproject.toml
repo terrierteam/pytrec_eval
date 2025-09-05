@@ -25,6 +25,7 @@ select = [
 ]
 ignore = [
     "D101",   # Missing docstring in public class
+    "UP035", "UP006" # typing deprecations
 ]
 
 [tool.ruff.lint.flake8-implicit-str-concat]
