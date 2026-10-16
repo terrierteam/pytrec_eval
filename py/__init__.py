@@ -1,6 +1,6 @@
 """Module pytrec_eval."""
 
-__version__ = '0.5.10'
+__version__ = '0.5.11'
 
 import collections
 import re
